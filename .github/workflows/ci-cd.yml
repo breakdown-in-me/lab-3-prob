@@ -1,0 +1,29 @@
+name: CI/CD Pipeline
+
+on:
+  # Автоматические триггеры
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+  
+  # РУЧНОЙ запуск - вот это активирует кнопку в интерфейсе
+  workflow_dispatch:
+    # Опциональные входные параметры
+    inputs:
+      environment:
+        description: 'Environment to deploy to'
+        required: true
+        default: 'staging'
+        type: choice
+        options:
+        - staging
+        - production
+      version:
+        description: 'Version to deploy'
+        required: false
+        type: string
+      force_deploy:
+        description: 'Force deployment'
+        required: false
+        type: boolean
