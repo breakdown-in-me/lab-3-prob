@@ -1,0 +1,39 @@
+stages:
+  - build
+  - test
+  - deploy
+
+variables:
+  DOCKER_TAG: "latest"
+
+.build_template: &build_template
+  stage: build
+  script:
+    - echo "Building application..."
+    - docker build -t myapp:$DOCKER_TAG .
+    - docker save myapp:$DOCKER_TAG > myapp.tar
+  artifacts:
+    paths:
+      - myapp.tar
+    expire_in: 1 week
+
+build_job:
+  <<: *build_template
+
+test_job:
+  stage: test
+  script:
+    - docker load < myapp.tar
+    - docker run myapp:$DOCKER_TAG npm test
+    - echo "Tests passed!"
+  needs: ["build_job"]
+
+deploy_to_production:
+  stage: deploy
+  script:
+    - echo "Deploying to production..."
+    - scp myapp.tar user@production-server:/tmp/
+    - ssh user@production-server "docker load < /tmp/myapp.tar && docker run -d myapp:$DOCKER_TAG"
+  when: always
+  only:
+    - main

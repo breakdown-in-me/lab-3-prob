@@ -1,0 +1,12 @@
+{
+  "name": "example-app",
+  "version": "1.0.0",
+  "scripts": {
+    "start": "node src/index.js",
+    "test": "jest --coverage",
+    "test:integration": "jest --config jest.integration.config.js"
+  },
+  "devDependencies": {
+    "jest": "^29.0.0"
+  }
+}
